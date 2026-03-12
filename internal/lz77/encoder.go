@@ -1,8 +1,5 @@
 package lz77
 
-// создаю токен
-// encoder берет кусок данных, сжимает его и превращает в токен - то есть маленькую инструкцию, что делать при декомпрессии
-
 func Compress(data []byte, windowSize int) []Token {
 	var tokens []Token
 

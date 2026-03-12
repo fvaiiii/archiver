@@ -1,4 +1,19 @@
 package lz77
 
-// читаю токены и преращаю обратно в текст
-// decoder потом берет эти токены и выполняет инструкции, восстанавливая исходный файл
+func Decompress(tokens []Token) []byte {
+	var ans []byte
+	for _, token := range tokens {
+		if token.Length > 0 {
+			start := len(ans) - token.Offset
+
+			for i := 0; i < token.Length; i++ {
+				ans = append(ans, ans[start+i])
+			}
+		}
+		if token.NextByte != 0 {
+			ans = append(ans, token.NextByte)
+		}
+
+	}
+	return ans
+}
