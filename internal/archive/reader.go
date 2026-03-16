@@ -11,7 +11,7 @@ import (
 func ReadArchive(path string) ([]lz77.Token, error) {
 	file, err := os.Open(path)
 	if err != nil {
-		return nil, fmt.Errorf("Ошибка открытия архива: %w", err)
+		return nil, fmt.Errorf("Error opening archive %w", err)
 	}
 	defer file.Close()
 
@@ -22,7 +22,7 @@ func ReadArchive(path string) ([]lz77.Token, error) {
 	}
 
 	if string(header) != "ARCV" {
-		return nil, fmt.Errorf("Неверный формат архива")
+		return nil, fmt.Errorf("Invalid archive format")
 	}
 
 	var tokenCount uint32

@@ -24,7 +24,7 @@ func WriteArchive(path string, tokens []lz77.Token) error {
 
 	err = binary.Write(file, binary.LittleEndian, uint32(len(tokens)))
 	if err != nil {
-		return fmt.Errorf("Ошибка записи количества токенов: %w", err)
+		return fmt.Errorf("Error writing token count: %w", err)
 	}
 
 	for _, token := range tokens {

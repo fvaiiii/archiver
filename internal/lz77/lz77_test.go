@@ -10,7 +10,7 @@ type TestCase struct {
 	text []byte
 }
 
-func TestCompressAndDecompress(t *testing.T) {
+func TestCompressAndDecompressRoundTrip(t *testing.T) {
 	cases := []TestCase{
 		{"test1", []byte{}},
 		{"test2", []byte{65}},
@@ -23,7 +23,7 @@ func TestCompressAndDecompress(t *testing.T) {
 
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
-			tokens := Compress(c.text, 64)
+			tokens := Compress(c.text, DefaultWindowSize)
 			result := Decompress(tokens)
 
 			if !bytes.Equal(c.text, result) {

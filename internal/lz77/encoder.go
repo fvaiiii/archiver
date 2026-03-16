@@ -1,25 +1,15 @@
 package lz77
 
-func max(a, b int) int {
-	if a > b {
-		return a
-	}
-	return b
-}
-
-func min(a, b int) int {
-	if a < b {
-		return a
-	}
-	return b
-}
+const (
+	MaxMatchLen       = 65535
+	MinMatchLen       = 3
+	DefaultWindowSize = 32768
+)
 
 func Compress(data []byte, windowSize int) []Token {
 	var tokens []Token
 	n := len(data)
 	pos := 0
-
-	const maxMathLen = 65535
 
 	for pos < n {
 		matchOffset := 0
@@ -28,7 +18,7 @@ func Compress(data []byte, windowSize int) []Token {
 		windowStart := max(0, pos-windowSize)
 
 		for i := windowStart; i < pos; i++ {
-			if matchLength >= maxMathLen {
+			if matchLength >= MaxMatchLen {
 				break
 			}
 
@@ -46,10 +36,10 @@ func Compress(data []byte, windowSize int) []Token {
 			}
 		}
 
-		if matchLength >= 3 {
+		if matchLength >= MinMatchLen {
 			tokens = append(tokens, Token{
 				Offset:   uint16(matchOffset),
-				Length:   uint16(min(matchLength, maxMathLen)),
+				Length:   uint16(min(matchLength, MaxMatchLen)),
 				NextByte: 0,
 			})
 			pos += matchLength
@@ -65,4 +55,18 @@ func Compress(data []byte, windowSize int) []Token {
 	}
 
 	return tokens
+}
+
+func max(a, b int) int {
+	if a > b {
+		return a
+	}
+	return b
+}
+
+func min(a, b int) int {
+	if a < b {
+		return a
+	}
+	return b
 }
