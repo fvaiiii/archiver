@@ -1,7 +1,7 @@
 package lz77
 
 type Token struct {
-	Offset   int
-	Length   int
+	Offset   uint16
+	Length   uint16
 	NextByte byte
 }

@@ -37,8 +37,8 @@ func Compress(data []byte, windowSize int) []Token {
 				nextByte = data[pos+matchLength]
 			}
 			tokens = append(tokens, Token{
-				Offset:   matchOffset,
-				Length:   matchLength,
+				Offset:   uint16(matchOffset),
+				Length:   uint16(matchLength),
 				NextByte: nextByte,
 			})
 

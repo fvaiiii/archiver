@@ -4,15 +4,13 @@ func Decompress(tokens []Token) []byte {
 	var ans []byte
 	for _, token := range tokens {
 		if token.Length > 0 {
-			start := len(ans) - token.Offset
+			start := len(ans) - int(token.Offset)
 
-			for i := 0; i < token.Length; i++ {
+			for i := 0; i < int(token.Length); i++ {
 				ans = append(ans, ans[start+i])
 			}
 		}
-		if token.NextByte != 0 {
-			ans = append(ans, token.NextByte)
-		}
+		ans = append(ans, token.NextByte)
 
 	}
 	return ans
