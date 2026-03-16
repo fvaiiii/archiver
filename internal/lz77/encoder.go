@@ -1,48 +1,58 @@
 package lz77
 
+func max(a, b int) int {
+	if a > b {
+		return a
+	}
+	return b
+}
+
+func min(a, b int) int {
+	if a < b {
+		return a
+	}
+	return b
+}
+
 func Compress(data []byte, windowSize int) []Token {
 	var tokens []Token
-
-	pos := 0
 	n := len(data)
+	pos := 0
+
+	const maxMathLen = 65535
 
 	for pos < n {
 		matchOffset := 0
 		matchLength := 0
 
-		windowStart := pos - windowSize
-		if windowStart < 0 {
-			windowStart = 0
-		}
+		windowStart := max(0, pos-windowSize)
 
-		for j := windowStart; j < pos; j++ {
-			length := 0
+		for i := windowStart; i < pos; i++ {
+			if matchLength >= maxMathLen {
+				break
+			}
 
-			for j+length < n && data[j+length] == data[pos+length] {
-				length++
-				if j+length >= pos {
+			lenMatch := 0
+			for pos+lenMatch < n && i+lenMatch < pos && data[i+lenMatch] == data[pos+lenMatch] {
+				lenMatch++
+				if lenMatch+pos-i >= matchLength+1 {
 					break
 				}
 			}
 
-			if length > matchLength {
-				matchLength = length
-				matchOffset = pos - j
+			if lenMatch > matchLength {
+				matchLength = lenMatch
+				matchOffset = pos - i
 			}
 		}
 
-		if matchLength > 0 {
-			var nextByte byte
-			if pos+matchLength < n {
-				nextByte = data[pos+matchLength]
-			}
+		if matchLength >= 3 {
 			tokens = append(tokens, Token{
 				Offset:   uint16(matchOffset),
-				Length:   uint16(matchLength),
-				NextByte: nextByte,
+				Length:   uint16(min(matchLength, maxMathLen)),
+				NextByte: 0,
 			})
-
-			pos += matchLength + 1
+			pos += matchLength
 		} else {
 
 			tokens = append(tokens, Token{
@@ -53,5 +63,6 @@ func Compress(data []byte, windowSize int) []Token {
 			pos++
 		}
 	}
+
 	return tokens
 }
