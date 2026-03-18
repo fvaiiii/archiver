@@ -12,7 +12,7 @@ func WriteArchive(path string, tokens []lz77.Token) error {
 
 	file, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
 	if err != nil {
-		return fmt.Errorf("Ошибка открытия файла: %w", err)
+		return fmt.Errorf("Error opening file: %w", err)
 	}
 
 	defer file.Close()
