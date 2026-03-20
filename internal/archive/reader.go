@@ -2,54 +2,30 @@ package archive
 
 import (
 	"encoding/binary"
-	"fmt"
 	"os"
 
 	"github.com/fvaiiii/archiver/internal/lz77"
 )
 
 func ReadArchive(path string) ([]lz77.Token, error) {
-	file, err := os.Open(path)
-	if err != nil {
-		return nil, fmt.Errorf("Error opening archive %w", err)
-	}
-	defer file.Close()
-
-	header := make([]byte, 4)
-	_, err = file.Read(header)
+	data, err := os.ReadFile(path)
 	if err != nil {
 		return nil, err
 	}
 
-	if string(header) != "ARCV" {
-		return nil, fmt.Errorf("Invalid archive format")
-	}
-
-	var tokenCount uint32
-	err = binary.Read(file, binary.LittleEndian, &tokenCount)
-	if err != nil {
-		return nil, err
-	}
-
-	tokens := make([]lz77.Token, 0, tokenCount)
-	for i := uint32(0); i < tokenCount; i++ {
-		var token lz77.Token
-		err = binary.Read(file, binary.LittleEndian, &token.Offset)
-		if err != nil {
-			return nil, err
+	var tokens []lz77.Token
+	for i := 0; i < len(data); {
+		flag := data[i]
+		i++
+		if flag == 0 {
+			tokens = append(tokens, lz77.Token{NextByte: data[i]})
+			i++
+		} else {
+			offset := binary.LittleEndian.Uint16(data[i : i+2])
+			length := binary.LittleEndian.Uint16(data[i+2 : i+4])
+			tokens = append(tokens, lz77.Token{Offset: offset, Length: length})
+			i += 4
 		}
-
-		err = binary.Read(file, binary.LittleEndian, &token.Length)
-		if err != nil {
-			return nil, err
-		}
-
-		err = binary.Read(file, binary.LittleEndian, &token.NextByte)
-		if err != nil {
-			return nil, err
-		}
-
-		tokens = append(tokens, token)
 	}
 	return tokens, nil
 }

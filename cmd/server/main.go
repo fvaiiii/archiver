@@ -35,6 +35,7 @@ func main() {
 	})
 
 	log.Println("Gin server is running on port :8080")
+	r.Static("/static", "./web")
 	if err := r.Run(":8080"); err != nil {
 		log.Fatal(err)
 	}

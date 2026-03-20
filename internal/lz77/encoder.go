@@ -18,14 +18,11 @@ func Compress(data []byte, windowSize int) []Token {
 		windowStart := max(0, pos-windowSize)
 
 		for i := windowStart; i < pos; i++ {
-			if matchLength >= MaxMatchLen {
-				break
-			}
 
 			lenMatch := 0
-			for pos+lenMatch < n && i+lenMatch < pos && data[i+lenMatch] == data[pos+lenMatch] {
+			for pos+lenMatch < n && data[i+lenMatch] == data[pos+lenMatch] {
 				lenMatch++
-				if lenMatch+pos-i >= matchLength+1 {
+				if lenMatch >= MaxMatchLen {
 					break
 				}
 			}

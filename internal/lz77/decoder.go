@@ -1,27 +1,22 @@
 package lz77
 
 func Decompress(tokens []Token) []byte {
-	var ans []byte
+	ans := make([]byte, 0, len(tokens)*2)
 
 	for _, token := range tokens {
 		if token.Length == 0 {
 			ans = append(ans, token.NextByte)
 		} else {
-			if int(token.Offset) > len(ans) {
+			start := len(ans) - int(token.Offset)
+			if start < 0 {
 				panic("invalid offset: past beginning of output")
 			}
 
-			start := len(ans) - int(token.Offset)
-
 			for i := 0; i < int(token.Length); i++ {
-				if start+i >= len(ans) {
-					panic("invalid match length")
-				}
 				ans = append(ans, ans[start+i])
 			}
 
 		}
 	}
-
 	return ans
 }
