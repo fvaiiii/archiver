@@ -15,14 +15,11 @@ import (
 )
 
 const (
-	maxFileSize   = 50 << 20
 	defaultWindow = 32768
 )
 
 func main() {
 	r := gin.Default()
-
-	// r.Use(corsMiddleware())
 
 	api := r.Group("/api")
 	{
@@ -119,18 +116,3 @@ func decompressHandler(c *gin.Context) {
 	})
 
 }
-
-// func corsMiddleware() gin.HandlerFunc {
-// 	return func(c *gin.Context) {
-// 		c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
-// 		c.Writer.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS")
-// 		c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type")
-
-// 		if c.Request.Method == "OPTIONS" {
-// 			c.AbortWithStatus(http.StatusOK)
-// 			return
-// 		}
-
-// 		c.Next()
-// 	}
-// }
