@@ -20,7 +20,6 @@ const (
 
 func main() {
 	r := gin.Default()
-
 	api := r.Group("/api")
 	{
 		api.POST("/compress", compressHandler)
