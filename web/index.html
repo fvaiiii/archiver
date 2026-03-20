@@ -1,0 +1,51 @@
+<!doctype html>
+<html>
+	<head>
+		<title>Archiver</title>
+	</head>
+	<body>
+		<h2>Compress</h2>
+		<input type="file" id="compressFile" />
+		<button onclick="compress()">Compress</button>
+
+		<h2>Decompress</h2>
+		<input type="file" id="decompressFile" />
+		<button onclick="decompress()">Decompress</button>
+
+		<script>
+			async function compress() {
+				const fileInput = document.getElementById('compressFile')
+				const file = fileInput.files[0]
+				const formData = new FormData()
+				formData.append('file', file)
+				const response = await fetch('http://localhost:8080/api/compress', {
+					method: 'POST',
+					body: formData,
+				})
+				const blob = await response.blob()
+				download(blob, 'archive.lz')
+			}
+
+			async function decompress() {
+				const fileInput = document.getElementById('decompressFile')
+				const file = fileInput.files[0]
+				const formData = new FormData()
+				formData.append('file', file)
+				const response = await fetch('http://localhost:8080/api/decompress', {
+					method: 'POST',
+					body: formData,
+				})
+				const blob = await response.blob()
+				download(blob, 'output.txt')
+			}
+
+			function download(blob, filename) {
+				const url = window.URL.createObjectURL(blob)
+				const a = document.createElement('a')
+				a.href = url
+				a.download = filename
+				a.click()
+			}
+		</script>
+	</body>
+</html>
