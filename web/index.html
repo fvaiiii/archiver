@@ -16,27 +16,46 @@
 			async function compress() {
 				const fileInput = document.getElementById('compressFile')
 				const file = fileInput.files[0]
+				if (!file) return
+
 				const formData = new FormData()
 				formData.append('file', file)
+
 				const response = await fetch('http://localhost:8080/api/compress', {
 					method: 'POST',
 					body: formData,
 				})
-				const blob = await response.blob()
-				download(blob, 'archive.lz')
+
+				if (response.ok) {
+					const blob = await response.blob()
+					download(blob, file.name + '.arc')
+				} else {
+					alert('Compression error')
+				}
 			}
 
 			async function decompress() {
 				const fileInput = document.getElementById('decompressFile')
 				const file = fileInput.files[0]
+				if (!file) return
+
 				const formData = new FormData()
 				formData.append('file', file)
+
 				const response = await fetch('http://localhost:8080/api/decompress', {
 					method: 'POST',
 					body: formData,
 				})
+
+				const contentDisposition = response.headers.get('Content-Disposition')
+				let filename = 'restored_file'
+
+				if (contentDisposition && contentDisposition.includes('filename=')) {
+					filename = contentDisposition.split('filename=')[1].replace(/"/g, '')
+				}
+
 				const blob = await response.blob()
-				download(blob, 'output.txt')
+				download(blob, filename)
 			}
 
 			function download(blob, filename) {
